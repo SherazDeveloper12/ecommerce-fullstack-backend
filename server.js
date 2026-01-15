@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // connect to database
 main()
-
+global.clients = [];
 app.get('/', (req, res) => {
   res.send('Hello, World!');
 });

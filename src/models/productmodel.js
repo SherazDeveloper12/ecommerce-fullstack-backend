@@ -8,8 +8,8 @@ const productSchema = new mongoose.Schema({
     category: { type: String, required: true },
     price: { type: Number, required: true },
     rating: { type: Number,  },
-   
     img: { type: Array, required: true },
+    newArrival: { type: Boolean, required: true },
     freeShipping: { type: Boolean, required: true },
     orders: { type: Number,  },
     condition: { type: String, required: true },
@@ -17,5 +17,6 @@ const productSchema = new mongoose.Schema({
     quantity: { type: Number, default: 0 },
 
 });
+productSchema.set('collection', 'products');
 const productModel = mongoose.model('Product', productSchema);
 module.exports = productModel;
