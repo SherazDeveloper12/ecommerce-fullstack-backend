@@ -6,7 +6,7 @@ const verifyToken = (req, res, next) => {
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
-            return res.status(500).json({ message: 'Failed to authenticate token.' });
+            return res.status(500).json({ message: 'Login Failed. Please Login Again' });
         }
         req.userId = decoded._id;
         console.log("Decoded Token:", decoded);

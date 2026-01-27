@@ -17,6 +17,7 @@ const registerUser = async (req, res) => {
         const { username, password, email } = req.body;
         const users = await authModel.find();
         const existingUser = users.find(user => user.email === email);
+        console.log(existingUser);
         if (existingUser) {
             return res.status(400).json({
                 status: 'error',
