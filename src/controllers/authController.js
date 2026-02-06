@@ -27,7 +27,7 @@ const registerUser = async (req, res) => {
             );
         }
         const newUser = await authModel.create({ username, password, email });
-        const token = jwt.sign({ _id: newUser._id, email: newUser.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ _id: newUser._id, email: newUser.email }, process.env.JWT_SECRET, );
         res.status(200).json({ status: 'success', message: 'User registered successfully', user: { _id: newUser._id, username: newUser.username, email: newUser.email }, token });
 
     } catch (error) {
@@ -46,7 +46,7 @@ const loginUser = async (req, res) => {
         if (user.password !== password) {
             return res.status(401).json({ status: 'error', message: 'Wrong password' });
         }
-        const token = jwt.sign({ _id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ _id: user._id, email: user.email }, process.env.JWT_SECRET, );
         res.status(200).json({ status: 'success', message: 'Login successful', user: { _id: user._id, username: user.username, email: user.email } , token});
     } catch (error) {
         res.status(500).json({ status: 'error', message: 'Error logging in', error: error.message });
@@ -57,10 +57,12 @@ const getUserProfile = async (req, res) => {
         token = req.headers.authorization;
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decoded._id;
-        const user = await authModel.findById(userId).select('-password');
+
+        const user = await authModel.findById(userId);
         if (!user) {
             return res.status(404).json({ status: 'error', message: 'User not found' });
         }
+    
         res.status(200).json({ status: 'success', user });
     } catch (error) {
         res.status(500).json({ status: 'error', message: 'Error fetching user profile', error: error.message });

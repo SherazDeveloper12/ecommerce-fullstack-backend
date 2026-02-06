@@ -14,7 +14,6 @@ const getpendingRevenue = async (req, res) => {
         const orders = await orderModel.find();
         const pendingOrders = orders.filter(order => order.status === 'Pending');
         const pendingRevenue = pendingOrders.reduce((total, order) => total + order.payableAmount, 0);
-        console.log('Pending Revenue:', pendingRevenue);
         res.status(200).json({status:"Successful", message:'Pending revenue calculated successfully', pendingRevenue });
     } catch (error) {
         res.status(500).json({status:"Error", message: 'Server Error', error: error.message });

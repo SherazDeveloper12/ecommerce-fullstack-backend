@@ -1,3 +1,4 @@
+const notificationModel = require('../models/notifcationmodel');
 const orderModel = require('../models/ordermodel');
 const productModel = require('../models/productmodel');
 
@@ -23,6 +24,13 @@ const createOrder = async (req, res) => {
         
         const orderCreated = new orderModel(order);
         const savedOrder = await orderCreated.save();
+        const notification = {
+            recipientid: "69843421d30a0ace506d9172",
+            message: `New Order Placed by ${orderdetails.shippingAddress.fullName}`,
+            type: 'Order Update'
+        }
+        const notificationCreated = new notificationModel(notification);
+        await notificationCreated.save();
         res.status(200).json(savedOrder);
     } catch (error) {
         console.error(error);
@@ -58,8 +66,26 @@ const getAllOrders = async (req, res) => {
     }
 }
 
+const updateOrderStatus = async (req, res) => {
+    try {
+        
+        const orderId = req.params.id;
+        const { status } = req.body;
+        const order = await orderModel.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ error: 'Order not found' });
+        }
+        order.status = status;
+        const updatedOrder = await order.save();
+        res.status(200).json(updatedOrder);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to update order status' });
+    }
+}
 module.exports = {
     createOrder,
     getAllOrders,
-    getOrderById
+    getOrderById,
+    updateOrderStatus
 };

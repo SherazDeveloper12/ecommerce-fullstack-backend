@@ -9,7 +9,6 @@ const verifyToken = (req, res, next) => {
             return res.status(500).json({ message: 'Login Failed. Please Login Again' });
         }
         req.userId = decoded._id;
-        console.log("Decoded Token:", decoded);
         next();
     });
 
