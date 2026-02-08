@@ -27,7 +27,7 @@ const registerUser = async (req, res) => {
             );
         }
         const newUser = await authModel.create({ username, password, email });
-        const token = jwt.sign({ _id: newUser._id, email: newUser.email }, process.env.JWT_SECRET, );
+        const token = jwt.sign({ _id: newUser._id, email: newUser.email, role: newUser.role }, process.env.JWT_SECRET, );
         res.status(200).json({ status: 'success', message: 'User registered successfully', user: { _id: newUser._id, username: newUser.username, email: newUser.email }, token });
 
     } catch (error) {
@@ -46,7 +46,7 @@ const loginUser = async (req, res) => {
         if (user.password !== password) {
             return res.status(401).json({ status: 'error', message: 'Wrong password' });
         }
-        const token = jwt.sign({ _id: user._id, email: user.email }, process.env.JWT_SECRET, );
+        const token = jwt.sign({ _id: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET, );
         res.status(200).json({ status: 'success', message: 'Login successful', user: { _id: user._id, username: user.username, email: user.email } , token});
     } catch (error) {
         res.status(500).json({ status: 'error', message: 'Error logging in', error: error.message });

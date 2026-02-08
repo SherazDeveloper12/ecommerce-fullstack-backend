@@ -9,6 +9,7 @@ const createOrder = async (req, res) => {
         const totalProductsCost = orderdetails.items.reduce((total, item) => (total + (products.find(product => product._id.toString() === item.product._id).price ) * item.quantity), 0);
         const deliveryCharges = 200; 
         const order = {
+            username: orderdetails.username,
             userId: orderdetails.userid,
             items: orderdetails.items,
             shippingAddress: orderdetails.shippingAddress,
@@ -77,15 +78,29 @@ const updateOrderStatus = async (req, res) => {
         }
         order.status = status;
         const updatedOrder = await order.save();
+        const usersocketid = global.userSockets.get(order.userId);
+        global.io.to(usersocketid).emit('orderStatusUpdated', { updatedOrder });
         res.status(200).json(updatedOrder);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to update order status' });
     }
 }
+
+const getOrdersByUserId = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const orders = await orderModel.find({ userId: userId });
+      
+        res.status(200).json({ status: "Success", orders, message: "Orders fetched successfully" });
+    } catch (error) {
+        res.status(500).json({ status: "Failed", message: "Failed to fetch orders", error: error.message });
+    }
+}
 module.exports = {
     createOrder,
     getAllOrders,
     getOrderById,
-    updateOrderStatus
+    updateOrderStatus,
+    getOrdersByUserId
 };
