@@ -4,7 +4,7 @@ const {
     FetchNotifications,
     // createNotification, 
     // getNotificationsByUserId, 
-    // markAsRead
+    MarkAsRead
  } = require('../controllers/notificationController');
 
 // Route to create a new notification
@@ -12,5 +12,5 @@ const {
 // Route to get notifications by user ID
 notificationRouter.get('/:userId', FetchNotifications);
 // Route to mark a notification as read
-// notificationRouter.put('/mark-as-read/:id', markAsRead);
+notificationRouter.put('/mark-notifications-as-read/', MarkAsRead);
 module.exports = notificationRouter;

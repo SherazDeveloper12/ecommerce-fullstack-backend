@@ -11,9 +11,24 @@ const FetchNotifications = async (req, res) => {
     }
 }
 
-const MarkAsRead = async (req, res) => {}
+const MarkAsRead = async (req, res) => {
+    const notifications = req.body.notifications;
 
-const CreateNotification = async (req, res) => {}
+    try {
+        notifications.forEach(async notifcation => {
+            const notificationId = notifcation._id;
+            const notification = await notificationModel.findById(notificationId);
+            notification.isRead = true;
+            await notification.save();
+        }); 
+        res.status(200).json({ message: 'Notifications marked as read' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to mark notifications as read' });
+    }
+}
+
+const CreateNotification = async (req, res) => { }
 
 module.exports = {
     FetchNotifications,

@@ -40,9 +40,7 @@ global.io = io;
 global.userSockets = new Map();
 
 io.on('connection', (socket) => {
-  console.log('a user connected: ' + socket.id);
-
-  
+    
   socket.on('authenticate', async(data) => {
     const { token } = data;
     try {
