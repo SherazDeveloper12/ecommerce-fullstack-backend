@@ -77,12 +77,7 @@ io.on('connection', (socket) => {
     
 
 
-  socket.on("newOrder", (order) => {
-    // broadcast the new order to all 
-    socket.emit('newOrder',{ message: 'Your order has been received!' });
-    // broadcast the new order confirmation with the specific socket id to the client that placed the order
-    io.to(global.userSockets.get('69843421d30a0ace506d9172')).emit('newOrder',  { message: 'A new order has been placed!', order: order });
-  })
+ 
 
   socket.on('disconnect', () => {
     console.log('user disconnected: ' + socket.id);

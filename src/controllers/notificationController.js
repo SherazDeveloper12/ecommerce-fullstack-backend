@@ -11,6 +11,7 @@ const FetchNotifications = async (req, res) => {
     }
 }
 
+
 const MarkAsRead = async (req, res) => {
     const notifications = req.body.notifications;
 
