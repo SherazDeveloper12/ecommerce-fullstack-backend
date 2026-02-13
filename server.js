@@ -15,6 +15,7 @@ const orderRouter = require('./src/routes/orderRoutes');
 const adminRouter = require('./src/routes/AdminRoutes');
 const notificationRouter = require('./src/routes/NotificationRoutes');
 const authModel = require('./src/models/authmodel');
+const { connected } = require('process');
 
 const server = http.createServer(app);
 
@@ -38,7 +39,9 @@ app.get('/', (req, res) => {
 
 global.io = io;
 global.userSockets = new Map();
-
+global.UserActivaties = new Map();
+const last60Seconds = [];
+const last60minutes = [];
 io.on('connection', (socket) => {
     
   socket.on('authenticate', async(data) => {
@@ -66,14 +69,15 @@ io.on('connection', (socket) => {
     const { userId } = data;
       socket.userId = userId;
       global.userSockets.set(userId, socket.id);
+      global.UserActivaties.set(userId, { socketId: socket.id,
+        userId: userId,
+        connectedAt: new Date(),
+      })
       console.log("global",global.userSockets);
   })
  
  
-   setInterval(() => {
-      const liveUsers = Array.from(global.userSockets.keys());
-    io.to(global.userSockets.get('69843421d30a0ace506d9172')).emit("liveUsers", { liveUsers });
-   }, 1000);
+   
     
 
 
@@ -87,7 +91,38 @@ io.on('connection', (socket) => {
   });
 })
 
-    
+
+    setInterval(() => {
+      const liveUsers = Array.from(global.userSockets.keys());
+      const liveUsersCount = liveUsers.length;
+      last60Seconds.push(liveUsersCount-1);
+      if (last60Seconds.length > 60) {
+        last60Seconds.shift();
+      }
+      
+    io.to(global.userSockets.get('69843421d30a0ace506d9172')).emit("liveUsers", { liveUsers });
+    io.to(global.userSockets.get('69843421d30a0ace506d9172')).emit("liveUsersCount", last60Seconds );
+   }, 1000);
+
+setInterval(() => {
+  
+  const liveUsersCount = last60Seconds.reduce((total, single) => single>total ? total = single : total, 0) ;
+  if (liveUsersCount === 0)
+  {
+    last60minutes.push(0);
+    }
+  else
+  {
+     last60minutes.push(liveUsersCount);
+  }
+  
+ 
+  if (last60minutes.length > 60) {
+    last60minutes.shift();
+  }
+  console.log("Live users count last 60 minutes:", last60minutes);
+  io.to(global.userSockets.get('69843421d30a0ace506d9172')).emit("liveUsersCount60Min", last60minutes );
+}, 60000);
 
 app.use('/auth', authRouter);
 app.use('/products', productRouter);
