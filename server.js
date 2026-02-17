@@ -16,7 +16,8 @@ const adminRouter = require('./src/routes/AdminRoutes');
 const notificationRouter = require('./src/routes/NotificationRoutes');
 const authModel = require('./src/models/authmodel');
 const { connected } = require('process');
-
+const chatRouter = require('./src/routes/ChatRoutes');
+const conversationRouter = require('./src/routes/ConversationRoutes');
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -129,7 +130,8 @@ app.use('/products', productRouter);
 app.use('/orders', orderRouter);
 app.use('/admin', adminRouter);
 app.use('/notifications', notificationRouter);
-
+app.use('/chat', chatRouter);
+app.use("/conversations", conversationRouter);
 
 server.listen(PORT, () => {
   console.log(`Server is running currently on http://localhost:${PORT}`);
