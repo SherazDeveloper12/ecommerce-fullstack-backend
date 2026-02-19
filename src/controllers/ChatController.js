@@ -21,7 +21,9 @@ const createChat = async (req, res) => {
             }
             const newChat = new chatModel(chat);
             const savedChat = await newChat.save();
+          
             global.io.to(global.userSockets.get(recipientID)).emit("newChat", savedChat);
+            global.io.to(global.userSockets.get(senderID)).emit("newChat", savedChat);
             res.status(200).json({ status: "success", message: "Chat created successfully", chat: savedChat });
         }
         else {
@@ -32,11 +34,12 @@ const createChat = async (req, res) => {
                 senderID,
                 conversationID: conversationID
             }
-            console.log("Chat object:", chat)
+            
             const newChat = new chatModel(chat);
             const savedChat = await newChat.save();
-                        global.io.to(global.userSockets.get(recipientID)).emit("newChat", savedChat);
-
+          
+            global.io.to(global.userSockets.get(recipientID)).emit("newChat", savedChat);
+            global.io.to(global.userSockets.get(senderID)).emit("newChat", savedChat);
             res.status(200).json({ status: "success", message: "Chat created successfully", chat: savedChat });
         }
 
@@ -61,7 +64,7 @@ const deleteChat = async (req, res) => { }
 
 const getChatsByConversationId = async (req, res) => {
     try {
-       
+
         const { conversationId } = req.params;
         const chats = await chatModel.find({ conversationID: conversationId });
         res.status(200).json({ status: "success", message: "Chats retrieved successfully", chats });

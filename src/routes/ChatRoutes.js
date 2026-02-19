@@ -6,7 +6,7 @@ const {
     getChats, 
     deleteChat,
     getChatsByConversationId
-} = require('../controllers/chatController');
+} = require('../controllers/ChatController');
 
 // Route to create a new chat
 chatRouter.post('/create', createChat);

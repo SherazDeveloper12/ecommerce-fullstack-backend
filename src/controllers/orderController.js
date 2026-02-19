@@ -6,8 +6,8 @@ const createOrder = async (req, res) => {
     try {
         const orderdetails = req.body;
         const products = await productModel.find()
-        const totalProductsCost = orderdetails.items.reduce((total, item) => (total + (products.find(product => product._id.toString() === item.product._id).price ) * item.quantity), 0);
-        const deliveryCharges = 200; 
+        const totalProductsCost = orderdetails.items.reduce((total, item) => (total + (products.find(product => product._id.toString() === item.product._id).price) * item.quantity), 0);
+        const deliveryCharges = 200;
         const order = {
             username: orderdetails.username,
             userId: orderdetails.userid,
@@ -22,7 +22,7 @@ const createOrder = async (req, res) => {
             payableAmount: totalProductsCost + deliveryCharges,
             orderDate: orderdetails.orderDate
         }
-        
+
         const orderCreated = new orderModel(order);
         const savedOrder = await orderCreated.save();
         const adminNotification = {
@@ -50,14 +50,14 @@ const createOrder = async (req, res) => {
         res.status(200).json(savedOrder);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ 
+        res.status(500).json({
             status: "Failed",
             message: "Order creation failed",
-          error: error.message,
-         });
+            error: error.message,
+        });
     }
 }
- 
+
 const getOrderById = async (req, res) => {
     try {
         const orderId = req.params.id;
@@ -84,7 +84,7 @@ const getAllOrders = async (req, res) => {
 
 const updateOrderStatus = async (req, res) => {
     try {
-        
+
         const orderId = req.params.id;
         const { status } = req.body;
         const order = await orderModel.findById(orderId);
@@ -106,7 +106,7 @@ const getOrdersByUserId = async (req, res) => {
     try {
         const userId = req.params.userId;
         const orders = await orderModel.find({ userId: userId });
-      
+
         res.status(200).json({ status: "Success", orders, message: "Orders fetched successfully" });
     } catch (error) {
         res.status(500).json({ status: "Failed", message: "Failed to fetch orders", error: error.message });
